@@ -19,9 +19,9 @@ const Footer = () => {
               Powering Your World with the Best in Electronics.
             </p>
             <div className="text-slate-400 text-sm space-y-1">
-              <p>123 Electronics St, Style City, NY 10001</p>
-              <p>Email: support@Zaptro.com</p>
-              <p>Phone: (123) 456-7890</p>
+              <p>123 Bah, Agra 283104</p>
+              <p>Email: ankit2300320@gmail.com</p>
+              <p>Phone: +91 8791143749</p>
             </div>
           </div>
 
@@ -107,7 +107,11 @@ const Footer = () => {
         <p className="text-center text-slate-400 text-sm">
           © 2026 <span className="text-pink-500">Haatix</span>. All rights reserved
         </p>
+        <div className="text-center text-slate-400 text-sm mt-2">
+          <p>Made with ❤️ in India by Ankit Sharma</p>
+        </div>
       </div>
+
     </footer>
   );
 };
