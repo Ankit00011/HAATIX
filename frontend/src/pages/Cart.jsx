@@ -22,7 +22,7 @@ const Cart = () => {
 
   const loadCart = async ()=>{
     try {
-      const res = await api.get('/cart/get', getAuthConfig())
+      const res = await api.get('/cart', getAuthConfig())
       if(res.data.success){
         dispatch(setCart(res.data.cart))
       }
