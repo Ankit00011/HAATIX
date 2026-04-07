@@ -90,8 +90,24 @@ const formatOrdersForResponse = (orders) =>
 export const createOrder = async (req, res) => {
     try {
         const { products, amount, tax, shipping, currency } = req.body;
+        
+        // Validate and sanitize amount
+        const parsedAmount = parseFloat(amount);
+        if (isNaN(parsedAmount) || parsedAmount <= 0) {
+            return res.status(400).json({ success: false, message: "Invalid amount" });
+        }
+        
+        // Razorpay test mode limit: ₹50,000
+        if (parsedAmount > 50000) {
+            console.warn(`Amount ${parsedAmount} exceeds Razorpay test mode limit`);
+            return res.status(400).json({ success: false, message: "Amount exceeds maximum limit" });
+        }
+
+        const amountInPaise = Math.round(parsedAmount * 100);
+        console.log(`Creating order with amount: ${parsedAmount} (${amountInPaise} paise)`);
+
         const options = {
-            amount: Math.round(Number(amount) * 100),
+            amount: amountInPaise,
             currency: currency || "INR",
             receipt: `receipt_${Date.now()}`,
         };
@@ -100,7 +116,7 @@ export const createOrder = async (req, res) => {
         const newOrder = new Order({
             user: req.user._id,
             products,
-            amount,
+            amount: parsedAmount,
             tax,
             shipping,
             currency,

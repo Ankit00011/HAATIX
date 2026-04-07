@@ -38,7 +38,7 @@ const AddressForm = () => {
   const subtotal = cart.totalPrice;
   const shipping = subtotal > 299 ? 0 : 50;
   const tax = parseFloat((subtotal * 0.18).toFixed(2));
-  const total = subtotal + shipping + tax;
+  const total = parseFloat((subtotal + shipping + tax).toFixed(2));
 
   const handlePayment = async () => {
     try {
@@ -49,7 +49,7 @@ const AddressForm = () => {
             productId: item.productId._id,
             quantity: item.quantity,
           })),
-          amount: total,
+          amount: Math.round(total * 100) / 100,
           tax,
           shipping,
           currency: "INR",
