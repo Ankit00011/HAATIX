@@ -13,9 +13,23 @@ const PORT = process.env.PORT || 3000
 
 //middleware
 app.use(express.json())
+
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.PRODUCTION_FRONTEND_URL,
+].filter(Boolean)
+
 app.use(cors({
-   origin: process.env.FRONTEND_URL,
-   credentials:true
+  origin: (origin, callback) => {
+    if (!origin) {
+      return callback(null, true)
+    }
+    if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+      return callback(null, true)
+    }
+    return callback(new Error('Not allowed by CORS'))
+  },
+  credentials: true,
 }))
 
 app.use('/api/v1/user', userRoute)
