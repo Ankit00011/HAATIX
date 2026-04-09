@@ -1,28 +1,22 @@
-import nodemailer from "nodemailer";
+import sgMail from "@sendgrid/mail";
 import "dotenv/config";
 
-export const sendOTPMail = async(otp, email) => {
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
-    },
-  });
-  const mailConfigurations = {
-    // It should be a string of sender/server email
-    from: process.env.MAIL_USER,
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+export const sendOTPMail = async (otp, email) => {
+  const msg = {
     to: email,
-
-    // Subject of Email
+    from: process.env.MAIL_USER || "noreply@haatix.com", // Use verified sender
     subject: "Password Reset OTP",
-    html: `<p>Your OTP for password reset is:<b>${otp}</b</p>`
+    html: `<p>Your OTP for password reset is: <b>${otp}</b></p>`,
   };
 
-  transporter.sendMail(mailConfigurations, function (error, info) {
-    if (error) throw Error(error);
-    console.log("Otp Sent Successfully");
-    console.log(info);
-  });
+  try {
+    const result = await sgMail.send(msg);
+    console.log("OTP Email Sent Successfully via SendGrid", result[0].statusCode);
+    return result;
+  } catch (error) {
+    console.error("Error sending OTP email via SendGrid:", error);
+    throw error;
+  }
 };
