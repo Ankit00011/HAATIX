@@ -11,14 +11,14 @@ export const register = async(req, res)=>{
     try {
         const  {firstName, lastName, email, password} = req.body;
         if(!firstName || !lastName || !email || !password){
-            res.status(400).json({
+            return res.status(400).json({
                 success: false,
                 message: 'All fields are required'
             })
         }
         const user = await User.findOne({email})
         if(user){
-            res.status(400).json({
+            return res.status(400).json({
                 success: false,
                 message: 'User already existed'
             })
@@ -31,12 +31,22 @@ export const register = async(req, res)=>{
             password: hashedPassword
         })
         const token = jwt.sign({id:newUser._id}, process.env.SECRET_KEY, {expiresIn: '10m'})
-        verifyEmail(token, email) //send email here
+        try {
+            await verifyEmail(token, email) //send email here
+        } catch (emailError) {
+            console.error("Failed to send verification email:", emailError);
+            // Optionally, you can delete the user or mark as unverified
+            // await User.findByIdAndDelete(newUser._id);
+            return res.status(500).json({
+                success: false,
+                message: 'User registered but failed to send verification email. Please try re-verifying.'
+            })
+        }
         newUser.token = token
         await newUser.save()
         return res.status(201).json({
             success: true,
-            message: 'User registerd successfully',
+            message: 'User registered successfully',
             user: newUser
         })
     } catch (error) {
