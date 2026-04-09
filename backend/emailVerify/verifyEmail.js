@@ -12,16 +12,14 @@ export const verifyEmail = async (token, email) => {
   }
 
   const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
+    service: "gmail",
     auth: {
       user: mailUser,
       pass: mailPass,
     },
-    tls: {
-      rejectUnauthorized: false,
-    },
+    secure: true,
+    port: 465,
+    connectionTimeout: 10000,
   });
 
   try {
