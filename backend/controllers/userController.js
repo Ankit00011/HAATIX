@@ -30,6 +30,13 @@ export const register = async(req, res)=>{
             email,
             password: hashedPassword
         })
+        if (!process.env.SECRET_KEY) {
+            console.error("Registration failed: SECRET_KEY is not defined.");
+            return res.status(500).json({
+                success: false,
+                message: 'Server configuration issue: SECRET_KEY is missing.'
+            })
+        }
         const token = jwt.sign({id:newUser._id}, process.env.SECRET_KEY, {expiresIn: '10m'})
         try {
             await verifyEmail(token, email) //send email here

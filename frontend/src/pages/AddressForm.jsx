@@ -30,6 +30,19 @@ const AddressForm = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const loadRazorpayScript = () => {
+    if (window.Razorpay) return Promise.resolve();
+
+    return new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error("Failed to load Razorpay SDK."));
+      document.body.appendChild(script);
+    });
+  };
+
   const handleSave = () => {
     dispatch(addAddress(formData));
     setShowForm(false);
@@ -42,6 +55,7 @@ const AddressForm = () => {
 
   const handlePayment = async () => {
     try {
+      await loadRazorpayScript();
       const { data } = await api.post(
         "/order/create-order",
         {

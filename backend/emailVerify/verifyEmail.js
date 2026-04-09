@@ -7,6 +7,10 @@ export const verifyEmail = async (token, email) => {
   const mailUser = process.env.MAIL_USER?.trim();
   const mailPass = process.env.MAIL_PASS?.trim();
 
+  if (!mailUser || !mailPass) {
+    throw new Error("Email credentials are not configured on the server.");
+  }
+
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
