@@ -14,9 +14,10 @@ const PORT = process.env.PORT || 3000
 //middleware
 app.use(express.json())
 
+const normalizeOrigin = (value) => value?.replace(/\/$/, "");
 const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  process.env.PRODUCTION_FRONTEND_URL,
+  normalizeOrigin(process.env.FRONTEND_URL),
+  normalizeOrigin(process.env.PRODUCTION_FRONTEND_URL),
 ].filter(Boolean)
 
 app.use(cors({
@@ -24,7 +25,8 @@ app.use(cors({
     if (!origin) {
       return callback(null, true)
     }
-    if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+    const normalizedOrigin = normalizeOrigin(origin)
+    if (allowedOrigins.length === 0 || allowedOrigins.includes(normalizedOrigin)) {
       return callback(null, true)
     }
     return callback(new Error('Not allowed by CORS'))
