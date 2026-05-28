@@ -4,7 +4,7 @@ import "dotenv/config";
 const parseBoolean = (value, fallback = false) => {
     if (value === undefined) return fallback;
     return String(value).toLowerCase() === "true";
-};
+}; 
 
 const getTransportConfig = () => {
     const mailUser = process.env.MAIL_USER?.trim();

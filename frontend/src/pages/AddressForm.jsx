@@ -1,7 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { addAddress, deleteAddress, setCart, setSelectedAddress } from "@/redux/productSlice";
 import { Label } from "@radix-ui/react-label";
 import React, { useState } from "react";
@@ -9,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { api, getAuthConfig } from "@/lib/api";
+import OrderSummaryCard from "@/components/OrderSummaryCard";
 
 const AddressForm = () => {
   const [formData, setFormData] = useState({
@@ -48,7 +47,7 @@ const AddressForm = () => {
     setShowForm(false);
   };
 
-  const subtotal = cart.totalPrice;
+  const subtotal = cart?.totalPrice || 0;
   const shipping = subtotal > 299 ? 0 : 50;
   const tax = parseFloat((subtotal * 0.18).toFixed(2));
   const total = parseFloat((subtotal + shipping + tax).toFixed(2));
@@ -143,57 +142,62 @@ const AddressForm = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto grid place-items-center p-10">
-      <div className="grid grid-cols-2 items-start gap-20 mt-10 max-w-7xl mx-auto">
-        <div className="space-y-4 p-6 bg-white">
+    <main className="min-h-screen bg-slate-50 py-10 dark:bg-background">
+      <div className="container-page">
+        <div className="mb-8">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-pink-600">Checkout</p>
+          <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl dark:text-white">Delivery details</h1>
+        </div>
+      <div className="grid items-start gap-8 lg:grid-cols-[1fr_24rem]">
+        <div className="premium-card space-y-4 p-5 sm:p-6">
           {showForm ? (
             <>
-              <div>
+              <div className="grid gap-2">
                 <Label htmlFor="fullName">Full Name</Label>
-                <Input id="fullName" name="fullName" required placeholder="John Doe" value={formData.fullName} onChange={handleChange} />
+                <Input id="fullName" name="fullName" required placeholder="John Doe" value={formData.fullName} onChange={handleChange} className="h-11 rounded-xl" />
               </div>
-              <div>
+              <div className="grid gap-2">
                 <Label htmlFor="phone">Phone Number</Label>
-                <Input id="phone" name="phone" required placeholder="+91 987654321" value={formData.phone} onChange={handleChange} />
+                <Input id="phone" name="phone" required placeholder="+91 987654321" value={formData.phone} onChange={handleChange} className="h-11 rounded-xl" />
               </div>
-              <div>
+              <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" name="email" required placeholder="john@example.com" value={formData.email} onChange={handleChange} />
+                <Input id="email" name="email" required placeholder="john@example.com" value={formData.email} onChange={handleChange} className="h-11 rounded-xl" />
               </div>
-              <div>
+              <div className="grid gap-2">
                 <Label htmlFor="address">Address</Label>
-                <Input id="address" name="address" required placeholder="123 Street, Area" value={formData.address} onChange={handleChange} />
+                <Input id="address" name="address" required placeholder="123 Street, Area" value={formData.address} onChange={handleChange} className="h-11 rounded-xl" />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="city">City</Label>
-                  <Input id="city" name="city" required placeholder="Agra" value={formData.city} onChange={handleChange} />
+                  <Input id="city" name="city" required placeholder="Agra" value={formData.city} onChange={handleChange} className="h-11 rounded-xl" />
                 </div>
                 <div>
                   <Label htmlFor="state">State</Label>
-                  <Input id="state" name="state" required placeholder="Uttar Pradesh" value={formData.state} onChange={handleChange} />
+                  <Input id="state" name="state" required placeholder="Uttar Pradesh" value={formData.state} onChange={handleChange} className="h-11 rounded-xl" />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="zip">Zip Code</Label>
-                  <Input id="zip" name="zip" required placeholder="201009" value={formData.zip} onChange={handleChange} />
+                  <Input id="zip" name="zip" required placeholder="201009" value={formData.zip} onChange={handleChange} className="h-11 rounded-xl" />
                 </div>
                 <div>
                   <Label htmlFor="country">Country</Label>
-                  <Input id="country" name="country" required placeholder="India" value={formData.country} onChange={handleChange} />
+                  <Input id="country" name="country" required placeholder="India" value={formData.country} onChange={handleChange} className="h-11 rounded-xl" />
                 </div>
               </div>
-              <Button onClick={handleSave} className="w-full">Save & Continue</Button>
+              <Button onClick={handleSave} className="h-11 w-full rounded-full bg-slate-950 text-white hover:bg-slate-800">Save & Continue</Button>
             </>
           ) : (
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold">Saved Addresses</h2>
+              <h2 className="text-xl font-bold text-slate-950 dark:text-white">Saved Addresses</h2>
               {addresses.map((addr, index) => (
                 <div
                   onClick={() => dispatch(setSelectedAddress(index))}
                   key={index}
-                  className={`border p-4 rounded-md cursor-pointer relative ${selectedAddress === index ? "border-pink-600 bg-pink-50" : "border-gray-300"}`}
+                  className={`relative cursor-pointer rounded-2xl border p-4 transition ${selectedAddress === index ? "border-slate-950 bg-slate-50 shadow-sm dark:border-white dark:bg-muted/40" : "border-border hover:border-slate-300"}`}
                 >
                   <p className="font-medium">{addr.fullName}</p>
                   <p>{addr.phone}</p>
@@ -205,45 +209,16 @@ const AddressForm = () => {
                 </div>
               ))}
 
-              <Button variant="outline" className="w-full" onClick={() => setShowForm(true)}>+ Add New Address</Button>
-              <Button disabled={selectedAddress === null} onClick={handlePayment} className="w-full bg-pink-600">Proceed To Checkout</Button>
+              <Button variant="outline" className="h-11 w-full rounded-full bg-transparent" onClick={() => setShowForm(true)}>+ Add New Address</Button>
+              <Button disabled={selectedAddress === null} onClick={handlePayment} className="h-11 w-full rounded-full bg-slate-950 text-white hover:bg-slate-800">Proceed To Checkout</Button>
             </div>
           )}
         </div>
 
-        <div>
-          <Card className="w-[400px]">
-            <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-between ">
-                <span>Subtotal ({cart?.items?.length} items)</span>
-                <span>Rs. {subtotal.toLocaleString("en-IN")}</span>
-              </div>
-              <div className="flex justify-between ">
-                <span>Shipping</span>
-                <span>Rs. {shipping}</span>
-              </div>
-              <div className="flex justify-between ">
-                <span>Tax(18%)</span>
-                <span>Rs. {tax}</span>
-              </div>
-              <Separator />
-              <div className="flex justify-between ">
-                <span>Total</span>
-                <span>Rs. {total}</span>
-              </div>
-              <div className="text-sm text-muted-foreground pt-4">
-                <p>* Free shipping on orders over Rs. 299</p>
-                <p>* Returns and exchanges available</p>
-                <p>* Secure checkout with multiple payment options</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <OrderSummaryCard itemCount={cart?.items?.length} subtotal={subtotal} shipping={shipping} tax={tax} total={total} />
       </div>
-    </div>
+      </div>
+    </main>
   );
 };
 

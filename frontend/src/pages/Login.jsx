@@ -51,17 +51,17 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-pink-100">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Create your account</CardTitle>
-          <CardDescription>Enter given details below to your account</CardDescription>
+    <main className="grid min-h-screen place-items-center bg-slate-50 p-4 dark:bg-background">
+      <Card className="premium-card w-full max-w-md overflow-hidden">
+        <CardHeader className="space-y-2 p-7">
+          <CardTitle className="text-3xl font-black tracking-tight">Welcome back</CardTitle>
+          <CardDescription>Sign in to continue shopping with Haatix.</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-7">
           <div className="flex flex-col gap-3">
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" name="email" type="email" placeholder="m@example.com" required value={formData.email} onChange={handleChange} />
+              <Input id="email" name="email" type="email" placeholder="m@example.com" required value={formData.email} onChange={handleChange} className="h-11 rounded-xl" />
             </div>
             <div className="grid gap-2">
               <div className="flex items-center">
@@ -76,6 +76,7 @@ const Login = () => {
                   onChange={handleChange}
                   type={showpassword ? "text" : "password"}
                   required
+                  className="h-11 rounded-xl pr-12"
                 />
                 {showpassword ? (
                   <EyeOff onClick={() => setShowPassword(false)} className="w-5 h-5 text-gray-700 absolute right-5 bottom-2" />
@@ -86,17 +87,17 @@ const Login = () => {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex-col gap-2">
-          <Button onClick={submitHandler} type="submit" className="w-full cursor-pointer bg-pink-500">
+        <CardFooter className="flex-col gap-3 p-7">
+          <Button onClick={submitHandler} type="submit" className="h-11 w-full cursor-pointer rounded-full bg-slate-950 text-white hover:bg-slate-800">
             {loading ? <><Loader2 className="h-4 w-4 animate-spin mr-2" />Please wait</> : "Login"}
           </Button>
           <p className="text-gray-700 text-sm">
             {" "}Don&apos;t have an account?{" "}
-            <Link to="/signup" className="hover:underline cursor-pointer text-pink-800">Signup</Link>
+            <Link to="/signup" className="cursor-pointer font-semibold text-pink-700 hover:underline">Signup</Link>
           </p>
         </CardFooter>
       </Card>
-    </div>
+    </main>
   );
 };
 

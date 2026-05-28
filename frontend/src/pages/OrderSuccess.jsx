@@ -8,13 +8,13 @@ const OrderSuccess = () => {
   const { user } = useSelector((store) => store.user);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
-      <div className="bg-white rounded-2xl shadow-lg p-10 max-w-md w-full text-center">
+    <main className="flex min-h-screen items-center justify-center bg-slate-50 p-6 dark:bg-background">
+      <div className="premium-card w-full max-w-md p-8 text-center sm:p-10">
         <div className="flex justify-center">
-          <CheckCircle className="h-20 w-20 text-green-500" />
+          <CheckCircle className="h-20 w-20 text-emerald-500" />
         </div>
 
-        <h1 className="text-2xl font-bold mt-6 text-gray-800">Payment Successful</h1>
+        <h1 className="mt-6 text-3xl font-black tracking-tight text-slate-950 dark:text-white">Payment Successful</h1>
 
         <p className="text-gray-600 mt-2">
           Thank you for your purchase! Your order has been placed successfully.
@@ -23,20 +23,20 @@ const OrderSuccess = () => {
         <div className="mt-6 flex flex-col gap-3">
           <button
             onClick={() => navigate("/products")}
-            className="w-full bg-pink-600 text-white py-3 rounded-xl hover:bg-pink-700 transition"
+            className="w-full rounded-full bg-slate-950 py-3 text-white transition hover:bg-slate-800"
           >
             Continue Shopping
           </button>
 
           <button
             onClick={() => navigate(`/profile/${user?._id}?tab=orders`)}
-            className="w-full border border-pink-600 text-pink-600 py-3 rounded-xl hover:bg-pink-50 transition"
+            className="w-full rounded-full border border-slate-300 py-3 text-slate-950 transition hover:bg-slate-100 dark:text-white dark:hover:bg-white/10"
           >
             View My Orders
           </button>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 

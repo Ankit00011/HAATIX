@@ -1,7 +1,9 @@
 import FilterSideBar from "@/components/FilterSideBar";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ProductCard from "@/components/ProductCard";
+import { Button } from "@/components/ui/button";
+import { SlidersHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setProducts } from "@/redux/productSlice";
@@ -14,11 +16,12 @@ const Products = () => {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [brand, setBrand] = useState("All");
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 999999]);
   const [sortOrder, setSortOrder] = useState("");
   const dispatch = useDispatch();
 
-  const getAllProducts = async () => {
+  const getAllProducts = useCallback(async () => {
     try {
       setLoading(true);
       const res = await api.get("/product/getallproducts");
@@ -31,7 +34,7 @@ const Products = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     if (allProducts.length === 0) return;
@@ -62,26 +65,23 @@ const Products = () => {
 
   useEffect(() => {
     getAllProducts();
-  }, []);
+  }, [getAllProducts]);
 
   return (
-    <div className="pt-20 pb-10">
-      <div className="max-w-7xl mx-auto flex gap-7">
-        <FilterSideBar
-          search={search}
-          setSearch={setSearch}
-          brand={brand}
-          setBrand={setBrand}
-          category={category}
-          setCategory={setCategory}
-          allProducts={allProducts}
-          priceRange={priceRange}
-          setPriceRange={setPriceRange}
-        />
-        <div className="flex flex-col flex-1">
-          <div className="flex justify-end mb-4">
+    <main className="min-h-screen bg-slate-50 pb-14 pt-24 dark:bg-background">
+      <div className="container-page">
+        <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-pink-600">Shop Haatix</p>
+            <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl dark:text-white">Explore electronics</h1>
+            <p className="mt-2 text-muted-foreground">{products.length} curated products available</p>
+          </div>
+          <div className="flex gap-3">
+            <Button variant="outline" className="rounded-full bg-white md:hidden" onClick={() => setShowMobileFilters(!showMobileFilters)}>
+              <SlidersHorizontal className="h-4 w-4" /> Filters
+            </Button>
             <Select onValueChange={(value) => setSortOrder(value)}>
-              <SelectTrigger className="w-[200px]">
+              <SelectTrigger className="h-11 w-[190px] rounded-full bg-white">
                 <SelectValue placeholder="Sort by Price" />
               </SelectTrigger>
               <SelectContent>
@@ -92,14 +92,41 @@ const Products = () => {
               </SelectContent>
             </Select>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-7">
-            {products.map((product) => (
-              <ProductCard key={product._id} product={product} loading={loading} />
-            ))}
+        </div>
+        <div className="grid gap-7 md:grid-cols-[16rem_1fr]">
+          <div className={`${showMobileFilters ? "block" : "hidden"} md:block`}>
+            <FilterSideBar
+              search={search}
+              setSearch={setSearch}
+              brand={brand}
+              setBrand={setBrand}
+              category={category}
+              setCategory={setCategory}
+              allProducts={allProducts}
+              priceRange={priceRange}
+              setPriceRange={setPriceRange}
+            />
+          </div>
+          <div className="min-w-0">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+            {loading
+              ? Array.from({ length: 8 }).map((_, index) => <ProductCard key={index} product={{ productImg: [], productName: "", productPrice: 0 }} loading={loading} />)
+              : products.map((product) => (
+                  <ProductCard key={product._id} product={product} loading={loading} />
+                ))}
+          </div>
+          {!loading && products.length === 0 && (
+            <div className="soft-panel grid min-h-[320px] place-items-center p-8 text-center">
+              <div>
+                <h2 className="text-2xl font-bold text-slate-950 dark:text-white">No products found</h2>
+                <p className="mt-2 text-muted-foreground">Try adjusting your filters or search term.</p>
+              </div>
+            </div>
+          )}
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 

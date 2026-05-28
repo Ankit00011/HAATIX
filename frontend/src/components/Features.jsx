@@ -5,7 +5,7 @@ const features = [
   {
     icon: Truck,
     title: "Free Shipping",
-    description: "On orders over $50",
+    description: "On orders over Rs. 299",
     iconColor: "text-blue-500",
     bgColor: "bg-blue-50",
   },
@@ -27,16 +27,16 @@ const features = [
 
 const Features = () => {
   return (
-    <section className="w-full border-y border-border bg-background py-6">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-4">
+    <section className="w-full bg-white py-8 dark:bg-background">
+      <div className="container-page">
+        <div className="grid gap-4 md:grid-cols-3">
           {features.map((feature, index) => (
             <div
               key={index}
-              className="flex items-center gap-4"
+              className="soft-panel flex items-center gap-4 p-5 focus-lift"
             >
               <div
-                className={`flex h-12 w-12 items-center justify-center rounded-full ${feature.bgColor}`}
+                className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${feature.bgColor}`}
               >
                 <feature.icon className={`h-6 w-6 ${feature.iconColor}`} />
               </div>

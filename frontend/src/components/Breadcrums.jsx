@@ -10,7 +10,7 @@ import {
 
 const Breadcrums = ({product}) => {
   return (
-    <div>
+    <div className="text-sm text-muted-foreground">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,35 +17,12 @@ const Profile = () => {
   const userId = params.userId;
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "profile";
-  const [updateUser, setUpdateUser] = useState({
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
-    email: user?.email || "",
-    phoneNo: user?.phoneNo || "",
-    address: user?.address || "",
-    city: user?.city || "",
-    zipCode: user?.zipCode || "",
-    profilePic: user?.profilePic || "",
-    role: user?.role || "user",
-  });
+  const [updateUser, setUpdateUser] = useState({});
 
   const [file, setFile] = useState(null);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (!user) return;
-    setUpdateUser({
-      firstName: user?.firstName || "",
-      lastName: user?.lastName || "",
-      email: user?.email || "",
-      phoneNo: user?.phoneNo || "",
-      address: user?.address || "",
-      city: user?.city || "",
-      zipCode: user?.zipCode || "",
-      profilePic: user?.profilePic || "",
-      role: user?.role || "user",
-    });
-  }, [user]);
+  const getFieldValue = (field) => updateUser[field] ?? user?.[field] ?? (field === "role" ? "user" : "");
 
   const handleChange = (e) => {
     setUpdateUser({ ...updateUser, [e.target.name]: e.target.value });
@@ -62,14 +39,14 @@ const Profile = () => {
 
     try {
       const formData = new FormData();
-      formData.append("firstName", updateUser.firstName);
-      formData.append("lastName", updateUser.lastName);
-      formData.append("email", updateUser.email);
-      formData.append("phoneNo", updateUser.phoneNo);
-      formData.append("address", updateUser.address);
-      formData.append("city", updateUser.city);
-      formData.append("zipCode", updateUser.zipCode);
-      formData.append("role", updateUser.role);
+      formData.append("firstName", getFieldValue("firstName"));
+      formData.append("lastName", getFieldValue("lastName"));
+      formData.append("email", getFieldValue("email"));
+      formData.append("phoneNo", getFieldValue("phoneNo"));
+      formData.append("address", getFieldValue("address"));
+      formData.append("city", getFieldValue("city"));
+      formData.append("zipCode", getFieldValue("zipCode"));
+      formData.append("role", getFieldValue("role"));
 
       if (file) {
         formData.append("file", file);
@@ -94,57 +71,57 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 pt-20">
-      <Tabs value={activeTab} onValueChange={(value) => setSearchParams({ tab: value })} className="mx-auto max-w-7xl items-center">
-        <TabsList className="grid w-full grid-cols-2">
+    <main className="min-h-screen bg-slate-50 pb-14 pt-24 dark:bg-background">
+      <Tabs value={activeTab} onValueChange={(value) => setSearchParams({ tab: value })} className="container-page">
+        <TabsList className="mx-auto grid w-full max-w-md grid-cols-2 rounded-full bg-white p-1 shadow-sm dark:bg-card">
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="orders">Orders</TabsTrigger>
         </TabsList>
         <TabsContent value="profile">
-          <div className="flex flex-col items-center justify-center bg-gray-100">
-            <h1 className="mb-7 text-2xl font-bold text-gray-800">Update Profile</h1>
-            <div className="flex w-full max-w-2xl flex-col items-start justify-between gap-10 px-7 lg:flex-row">
-              <div className="flex flex-col items-center">
-                <img src={updateUser?.profilePic || userLogo} alt="" className="h-32 w-32 rounded-full border-4 border-pink-800 object-cover" />
-                <Label className="mt-4 cursor-pointer rounded-lg bg-pink-600 px-4 py-2 text-white hover:bg-pink-700">
+          <div className="mt-8">
+            <h1 className="mb-7 text-center text-3xl font-black tracking-tight text-slate-950 dark:text-white">Update Profile</h1>
+            <div className="mx-auto grid w-full max-w-4xl gap-8 lg:grid-cols-[14rem_1fr]">
+              <div className="premium-card flex flex-col items-center p-6">
+                <img src={getFieldValue("profilePic") || userLogo} alt="" className="h-32 w-32 rounded-full border-4 border-white object-cover shadow-xl" />
+                <Label className="mt-4 cursor-pointer rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800">
                   Change Picture
                   <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
                 </Label>
               </div>
-              <form onSubmit={handleSubmit} className="space-y-4 rounded-lg bg-white p-5 shadow-lg">
-                <div className="grid grid-cols-2 gap-4">
+              <form onSubmit={handleSubmit} className="premium-card space-y-4 p-5 sm:p-6">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <Label className="block text-sm font-medium">First Name</Label>
-                    <Input type="text" name="firstName" placeholder="John" value={updateUser.firstName} onChange={handleChange} className="mt-1" />
+                    <Input type="text" name="firstName" placeholder="John" value={getFieldValue("firstName")} onChange={handleChange} className="mt-1" />
                   </div>
                   <div>
                     <Label className="block text-sm font-medium">Last Name</Label>
-                    <Input type="text" name="lastName" placeholder="Doe" value={updateUser.lastName} onChange={handleChange} className="mt-1" />
+                    <Input type="text" name="lastName" placeholder="Doe" value={getFieldValue("lastName")} onChange={handleChange} className="mt-1" />
                   </div>
                 </div>
                 <div>
                   <Label className="block text-sm font-medium">Email</Label>
-                  <Input type="email" name="email" disabled value={updateUser.email} onChange={handleChange} className="mt-1 cursor-not-allowed bg-gray-100" />
+                  <Input type="email" name="email" disabled value={getFieldValue("email")} onChange={handleChange} className="mt-1 cursor-not-allowed bg-gray-100" />
                 </div>
                 <div>
                   <Label className="block text-sm font-medium">Phone Number</Label>
-                  <Input type="text" name="phoneNo" placeholder="Enter Your Contact No." value={updateUser.phoneNo} onChange={handleChange} className="mt-1" />
+                  <Input type="text" name="phoneNo" placeholder="Enter Your Contact No." value={getFieldValue("phoneNo")} onChange={handleChange} className="mt-1" />
                 </div>
                 <div>
                   <Label className="block text-sm font-medium">Address</Label>
-                  <Input type="text" name="address" placeholder="Enter Your Address" value={updateUser.address} onChange={handleChange} className="mt-1" />
+                  <Input type="text" name="address" placeholder="Enter Your Address" value={getFieldValue("address")} onChange={handleChange} className="mt-1" />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <Label className="block text-sm font-medium">City</Label>
-                    <Input type="text" name="city" placeholder="Enter Your City" value={updateUser.city} onChange={handleChange} className="mt-1" />
+                    <Input type="text" name="city" placeholder="Enter Your City" value={getFieldValue("city")} onChange={handleChange} className="mt-1" />
                   </div>
                   <div>
                     <Label className="block text-sm font-medium">Zip Code</Label>
-                    <Input type="text" name="zipCode" placeholder="Enter Your ZipCode" value={updateUser.zipCode} onChange={handleChange} className="mt-1" />
+                    <Input type="text" name="zipCode" placeholder="Enter Your ZipCode" value={getFieldValue("zipCode")} onChange={handleChange} className="mt-1" />
                   </div>
                 </div>
-                <Button type="submit" className="mt-4 w-full rounded-lg bg-pink-600 py-2 font-semibold text-white hover:bg-pink-700">
+                <Button type="submit" className="mt-4 h-11 w-full rounded-full bg-slate-950 font-semibold text-white hover:bg-slate-800">
                   Update Profile
                 </Button>
               </form>
@@ -155,7 +132,7 @@ const Profile = () => {
           <OrderHistory />
         </TabsContent>
       </Tabs>
-    </div>
+    </main>
   );
 };
 
